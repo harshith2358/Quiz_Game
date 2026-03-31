@@ -58,10 +58,9 @@ let points = 0;
 const prompt = require("prompt-sync")();
 const readline = require("readline");
 
-
 const rl = readline.createInterface({
-  input: process.stdin , 
-  output: process.stdout
+  input: process.stdin,
+  output: process.stdout,
 });
 
 const qns_timer = (seconds) => {
@@ -82,25 +81,32 @@ const total_timer = () => {
     total_time++;
   }, 1000);
 
-  return total_time 
+  return total_time;
 };
 
 const question_displayer = () => {
   const index = Math.ceil(Math.random() * QUESTIONS.length);
   question = QUESTIONS[index];
 
-  console.log(`Your question is ${question}`);
+  console.log(`Your question is:\n${question}`);
 
-  qns_timer(90)
+  qns_timer(90);
 
   return index;
 };
 
-const get_user_guess = () => {
-  rl.question("What is your answer: ",(user_guess) => {
-    user_guess = user_guess.toLowerCase()
-    return user_guess
-  });
+const get_user_guess = async () => {
+  const get_user_guess_helper = () => {
+    return new Promise((resolve) => {
+      rl.question("What is your answer: ", (user_guess) => {
+        user_guess = user_guess.toLowerCase();
+        resolve(user_guess);
+      });
+    });
+  };
+
+  let user_guess = await get_user_guess_helper();
+  return user_guess;
 };
 
 const question_checker = (index, user_guess) => {
@@ -111,7 +117,7 @@ const question_checker = (index, user_guess) => {
     ANSWERS.splice(index, 1);
   } else if (user_guess == "skip") {
     console.log("You have skipped a question. Minus 5 points");
-    points -= 5
+    points -= 5;
   } else {
     points -= 10;
     console.log(
@@ -119,7 +125,6 @@ const question_checker = (index, user_guess) => {
     );
   }
 };
-
 
 let total_time = total_timer();
 let index = question_displayer();
